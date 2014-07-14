@@ -13,8 +13,6 @@
 #
 # Copyright Buildbot Team Members
 
-import pkg_resources
-
 from buildbot import config
 from buildbot.util import service
 from buildbot.www import auth
@@ -25,8 +23,8 @@ from buildbot.www import sse
 from buildbot.www import ws
 from twisted.application import strports
 from twisted.internet import defer
-from twisted.python import log
 from twisted.web import server
+from buildbot.plugins import get_plugins
 
 
 class WWWService(config.ReconfigurableServiceMixin, service.AsyncMultiService):
@@ -41,23 +39,7 @@ class WWWService(config.ReconfigurableServiceMixin, service.AsyncMultiService):
         self.site = None
 
         # load the apps early, in case something goes wrong in Python land
-        epAndApps = []
-        for ep in pkg_resources.iter_entry_points('buildbot.www'):
-            try:
-                epAndApps.append((ep, ep.load()))
-            # ignore wrong ep (can happen in case of branch switch, without cleaning the sandbox)
-            except ImportError, e:
-                log.msg(e, "while loading www plugins")
-
-        # look for duplicate names
-        names = set([ep.name for ep, app in epAndApps])
-        seen = set()
-        dupes = set(n for n in names if n in seen or seen.add(n))
-        if dupes:
-            raise RuntimeError("duplicate buildbot.www entry points: %s"
-                               % (dupes,))
-
-        self.apps = dict((ep.name, app) for (ep, app) in epAndApps)
+        self.apps = get_plugins('www', None, load_now=True)
 
         if 'base' not in self.apps:
             raise RuntimeError("could not find buildbot-www; is it installed?")
