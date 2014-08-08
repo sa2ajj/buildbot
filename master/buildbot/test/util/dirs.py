@@ -26,7 +26,8 @@ class DirsMixin(object):
     def setUpDirs(self, *dirs):
         """Make sure C{dirs} exist and are empty, and set them up to be deleted
         in tearDown."""
-        self._dirs = map(os.path.abspath, dirs)
+        self._oldcwd = os.getcwd()
+        self._dirs = [os.path.abspath(x) for x in dirs]
         for dir in self._dirs:
             if os.path.exists(dir):
                 shutil.rmtree(dir)
@@ -35,6 +36,7 @@ class DirsMixin(object):
         return defer.succeed(None)
 
     def tearDownDirs(self):
+        os.chdir(self._oldcwd)
         for dir in self._dirs:
             if os.path.exists(dir):
                 shutil.rmtree(dir)

@@ -83,9 +83,13 @@ class BuildMaster(config.ReconfigurableServiceMixin, service.AsyncMultiService):
 
         self.umask = umask
 
-        self.basedir = basedir
         if basedir is not None:  # None is used in tests
-            assert os.path.isdir(self.basedir)
+            basedir = os.path.expanduser(basedir)
+            assert os.path.isdir(basedir)
+
+            os.chdir(basedir)
+        self.basedir = basedir
+
         self.configFileName = configFileName
 
         # flag so we don't try to do fancy things before the master is ready
@@ -209,7 +213,6 @@ class BuildMaster(config.ReconfigurableServiceMixin, service.AsyncMultiService):
             try:
                 self.config = config.MasterConfig.loadConfig(self.basedir,
                                                              self.configFileName)
-
             except config.ConfigErrors, e:
                 log.msg("Configuration Errors:")
                 for msg in e.errors:
@@ -247,8 +250,7 @@ class BuildMaster(config.ReconfigurableServiceMixin, service.AsyncMultiService):
             # startup/reconfig.  This goes directly to the DB since the data
             # API isn't initialized yet, and anyway, this method is aware of
             # the DB API since it just called its setup function
-            self.masterid = yield self.db.masters.findMasterId(
-                name=self.name)
+            self.masterid = yield self.db.masters.findMasterId(name=self.name)
 
             yield self.doMasterHouseKeeping(self.masterid)
 
@@ -260,9 +262,8 @@ class BuildMaster(config.ReconfigurableServiceMixin, service.AsyncMultiService):
             yield self.reconfigService(self.config)
 
             # mark the master as active now that mq is running
-            yield self.data.updates.masterActive(
-                name=self.name,
-                masterid=self.masterid)
+            yield self.data.updates.masterActive(name=self.name,
+                                                 masterid=self.masterid)
         except:
             f = failure.Failure()
             log.err(f, 'while starting BuildMaster')
