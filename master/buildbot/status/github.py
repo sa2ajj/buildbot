@@ -14,7 +14,7 @@
 # Copyright Buildbot Team Members
 from __future__ import absolute_import
 
-import datetime
+from datetime import datetime
 
 from twisted.internet import defer
 from twisted.python import log
@@ -51,22 +51,13 @@ class GitHubStatus(StatusReceiverMultiService):
 
         StatusReceiverMultiService.__init__(self)
 
-        if not sha:
-            sha = Interpolate("%(src::revision)s")
-
-        if not startDescription:
-            startDescription = "Build started."
-        self._startDescription = startDescription
-
-        if not endDescription:
-            endDescription = "Build done."
-        self._endDescription = endDescription
-
-        self._token = token
-        self._sha = sha
+        self._sha = sha or Interpolate("%(src::revision)s")
         self._repoOwner = repoOwner
         self._repoName = repoName
-        self._github = GitHubAPI(oauth2_token=self._token)
+        self._startDescription = startDescription or "Build started."
+        self._endDescription = endDescription or "Build done."
+
+        self._github = GitHubAPI(oauth2_token=token)
 
     def startService(self):
         StatusReceiverMultiService.startService(self)
@@ -88,10 +79,9 @@ class GitHubStatus(StatusReceiverMultiService):
         See: C{IStatusReceiver}.
         """
         d = self._sendStartStatus(builderName, build)
-        d.addErrback(
-            log.err,
-            'While sending start status to GitHub for %s.' % (
-                builderName))
+        d.addErrback(log.err,
+                     'While sending start status to GitHub for %s.' %
+                     (builderName,))
 
     @defer.inlineCallbacks
     def _sendStartStatus(self, builderName, build):
@@ -110,8 +100,7 @@ class GitHubStatus(StatusReceiverMultiService):
             'state': 'pending',
             'description': description,
             'builderName': builderName,
-            'startDateTime': datetime.datetime.fromtimestamp(
-                startTime).isoformat(' '),
+            'startDateTime': datetime.fromtimestamp(startTime).isoformat(' '),
             'endDateTime': 'In progress',
             'duration': 'In progress',
         })
@@ -123,10 +112,9 @@ class GitHubStatus(StatusReceiverMultiService):
         See: C{IStatusReceiver}.
         """
         d = self._sendFinishStatus(builderName, build, results)
-        d.addErrback(
-            log.err,
-            'While sending finish status to GitHub for %s.' % (
-                builderName))
+        d.addErrback(log.err,
+                     'While sending finish status to GitHub for %s.' %
+                     (builderName,))
 
     @defer.inlineCallbacks
     def _sendFinishStatus(self, builderName, build, results):
@@ -146,10 +134,8 @@ class GitHubStatus(StatusReceiverMultiService):
             'state': state,
             'description': description,
             'builderName': builderName,
-            'startDateTime': datetime.datetime.fromtimestamp(
-                startTime).isoformat(' '),
-            'endDateTime': datetime.datetime.fromtimestamp(
-                endTime).isoformat(' '),
+            'startDateTime': datetime.fromtimestamp(startTime).isoformat(' '),
+            'endDateTime': datetime.fromtimestamp(endTime).isoformat(' '),
             'duration': duration,
         })
 
@@ -160,8 +146,8 @@ class GitHubStatus(StatusReceiverMultiService):
         """
         Return a string of human readable time delta.
         """
-        start_date = datetime.datetime.fromtimestamp(start)
-        end_date = datetime.datetime.fromtimestamp(end)
+        start_date = datetime.fromtimestamp(start)
+        end_date = datetime.fromtimestamp(end)
         delta = end_date - start_date
 
         result = []
