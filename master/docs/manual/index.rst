@@ -9,7 +9,7 @@ Buildbot Manual
    introduction
    installation
    concepts
-   configuration
+   config/index
    customization
    new-style-steps
    cmdline

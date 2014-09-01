@@ -19,25 +19,25 @@ allows to use a component of kind ``kind``.
 Available ``kind``\s are:
 
 ``buildslave``
-    build slaves, described in :doc:`cfg-buildslaves`
+    build slaves, described in :doc:`config/buildslaves`
 
 ``changes``
-    change source, described in :doc:`cfg-changesources`
+    change source, described in :doc:`config/changesources`
 
 ``schedulers``
-    schedulers, described in :doc:`cfg-schedulers`
+    schedulers, described in :doc:`config/schedulers`
 
 ``steps``
-    build steps, described in :doc:`cfg-buildsteps`
+    build steps, described in :doc:`config/buildsteps`
 
 ``status``
-    status targets, described in :doc:`cfg-statustargets`
+    status targets, described in :doc:`config/statustargets`
 
 ``util``
     utility classes.
-    For example, :doc:`BuilderConfig <cfg-builders>`, :doc:`cfg-buildfactories`, :ref:`ChangeFilter <Change-Filters>` and :doc:`Locks <cfg-interlocks>` are accessible through ``util``.
+    For example, :doc:`BuilderConfig <config/builders>`, :doc:`config/buildfactories`, :ref:`ChangeFilter <Change-Filters>` and :doc:`Locks <config/interlocks>` are accessible through ``util``.
 
-Web interface plugins are not used directly: as described in :doc:`web server configuration <cfg-www>` section, they are listed in the corresponding section of the web server configuration dictionary.
+Web interface plugins are not used directly: as described in :doc:`web server configuration <config/www>` section, they are listed in the corresponding section of the web server configuration dictionary.
 
 .. note::
 
