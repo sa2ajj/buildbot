@@ -61,7 +61,6 @@ s = BuildSlave(buildmaster_host, port, slavename, passwd, basedir,
                keepalive, usepty, umask=umask, maxdelay=maxdelay,
                allow_shutdown=allow_shutdown)
 s.setServiceParent(application)
-
 """]
 
 
