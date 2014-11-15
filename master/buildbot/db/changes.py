@@ -166,10 +166,10 @@ class ChangesConnectorComponent(base.DBConnectorComponent):
         d = self.db.pool.do(thd)
 
         # then turn those into changes, using the cache
+        @d.addCallback
         def get_changes(changeids):
             return defer.gatherResults([self.getChange(changeid)
                                         for changeid in changeids])
-        d.addCallback(get_changes)
         return d
 
     def getChanges(self):
@@ -184,10 +184,10 @@ class ChangesConnectorComponent(base.DBConnectorComponent):
         d = self.db.pool.do(thd)
 
         # then turn those into changes, using the cache
+        @d.addCallback
         def get_changes(changeids):
             return defer.gatherResults([self.getChange(changeid)
                                         for changeid in changeids])
-        d.addCallback(get_changes)
         return d
 
     def getChangesCount(self):

@@ -567,11 +567,12 @@ class BuilderControl:
         for s in self.original.slaves:
             dl.append(s.ping(self.original.builder_status))
         d = defer.DeferredList(dl)
-        d.addCallback(self._gatherPingResults)
-        return d
 
-    def _gatherPingResults(self, res):
-        for ignored, success in res:
-            if not success:
-                return False
-        return True
+        @d.addCallback
+        def _gatherPingResults(res):
+            for ignored, success in res:
+                if not success:
+                    return False
+            return True
+
+        return d

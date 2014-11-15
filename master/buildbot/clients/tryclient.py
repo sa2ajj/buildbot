@@ -853,22 +853,22 @@ class Try(pb.Referenceable):
         self.exitcode = 0
         d = fireEventually(None)
         if bool(self.config.get("get-builder-names")):
-            d.addCallback(lambda res: self.getAvailableBuilderNames())
+            d.addCallback(lambda _: self.getAvailableBuilderNames())
         else:
-            d.addCallback(lambda res: self.createJob())
-            d.addCallback(lambda res: self.announce("job created"))
+            d.addCallback(lambda _: self.createJob())
+            d.addCallback(lambda _: self.announce("job created"))
             deliver = self.deliverJob
             if bool(self.config.get("dryrun")):
                 deliver = self.fakeDeliverJob
-            d.addCallback(lambda res: deliver())
-            d.addCallback(lambda res: self.announce("job has been delivered"))
-            d.addCallback(lambda res: self.getStatus())
+            d.addCallback(lambda _: deliver())
+            d.addCallback(lambda _: self.announce("job has been delivered"))
+            d.addCallback(lambda _: self.getStatus())
         d.addErrback(self.trapSystemExit)
         d.addErrback(log.err)
         d.addCallback(self.cleanup)
         if _inTests:
             return d
-        d.addCallback(lambda res: reactor.stop())
+        d.addCallback(lambda _: reactor.stop())
 
         reactor.run()
         sys.exit(self.exitcode)

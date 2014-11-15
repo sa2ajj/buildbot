@@ -103,6 +103,7 @@ class HgPoller(base.PollingChangeSource):
         d = utils.getProcessOutput(self.hgbin, args, path=self._absWorkdir(),
                                    env=os.environ, errortoo=False)
 
+        @d.addCallback
         def process(output):
             # all file names are on one line
             date, author, files, comments = output.decode(self.encoding, "replace").split(
@@ -119,7 +120,6 @@ class HgPoller(base.PollingChangeSource):
                     raise
             return stamp, author.strip(), files.split(os.pathsep)[:-1], comments.strip()
 
-        d.addCallback(process)
         return d
 
     def _isRepositoryReady(self):
@@ -180,16 +180,16 @@ class HgPoller(base.PollingChangeSource):
         """
         d = self._getStateObjectId()
 
+        @d.addCallback
         def oid_cb(oid):
             d = self.master.db.state.getState(oid, 'current_rev', None)
 
+            @d.addCallback
             def addOid(cur):
                 if cur is not None:
                     return oid, int(cur)
                 return oid, cur
-            d.addCallback(addOid)
             return d
-        d.addCallback(oid_cb)
         return d
 
     def _setCurrentRev(self, rev, oid=None):
@@ -201,9 +201,9 @@ class HgPoller(base.PollingChangeSource):
         else:
             d = defer.succeed(oid)
 
+        @d.addCallback
         def set_in_state(obj_id):
             return self.master.db.state.setState(obj_id, 'current_rev', rev)
-        d.addCallback(set_in_state)
 
         return d
 
@@ -224,6 +224,7 @@ class HgPoller(base.PollingChangeSource):
                 self.branch, self.repourl))
         d.addErrback(no_head_err)
 
+        @d.addCallback
         def results(heads):
             if not heads:
                 return
@@ -240,7 +241,6 @@ class HgPoller(base.PollingChangeSource):
             # same node -> rev assignations ?
             return int(heads.strip())
 
-        d.addCallback(results)
         return d
 
     @defer.inlineCallbacks

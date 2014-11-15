@@ -212,11 +212,11 @@ class Status(config.ReconfigurableServiceMixin, service.AsyncMultiService):
         """Get a Change object; returns a deferred"""
         d = self.master.db.changes.getChange(number)
 
+        @d.addCallback
         def chdict2change(chdict):
             if not chdict:
                 return None
             return changes.Change.fromChdict(self.master, chdict)
-        d.addCallback(chdict2change)
         return d
 
     def getSchedulers(self):
@@ -253,10 +253,10 @@ class Status(config.ReconfigurableServiceMixin, service.AsyncMultiService):
     def getBuildSets(self):
         d = self.master.db.buildsets.getBuildsets(complete=False)
 
+        @d.addCallback
         def make_status_objects(bsdicts):
             return [buildset.BuildSetStatus(bsdict, self)
                     for bsdict in bsdicts]
-        d.addCallback(make_status_objects)
         return d
 
     def generateFinishedBuilds(self, builders=[], branches=[],

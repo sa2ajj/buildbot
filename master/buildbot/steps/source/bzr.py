@@ -67,20 +67,20 @@ class Bzr(Source):
 
         d = self.checkBzr()
 
+        @d.addCallback
         def checkInstall(bzrInstalled):
             if not bzrInstalled:
                 raise BuildSlaveTooOldError("bzr is not installed on slave")
             return 0
-        d.addCallback(checkInstall)
 
         d.addCallback(lambda _: self.sourcedirIsPatched())
 
+        @d.addCallback
         def checkPatched(patched):
             if patched:
                 return self._dovccmd(['clean-tree', '--ignored', '--force'])
             else:
                 return 0
-        d.addCallback(checkPatched)
 
         if self.mode == 'full':
             d.addCallback(lambda _: self.full())
@@ -127,8 +127,9 @@ class Bzr(Source):
             raise ValueError("Unknown method, check your configuration")
 
     def _clobber(self):
-        cmd = remotecommand.RemoteCommand('rmdir', {'dir': self.workdir,
-                                                    'logEnviron': self.logEnviron, })
+        cmd = remotecommand.RemoteCommand('rmdir',
+                                          {'dir': self.workdir,
+                                           'logEnviron': self.logEnviron})
         cmd.useLog(self.stdio_log, False)
         d = self.runCommand(cmd)
 
@@ -145,8 +146,9 @@ class Bzr(Source):
         return d
 
     def copy(self):
-        cmd = remotecommand.RemoteCommand('rmdir', {'dir': 'build',
-                                                    'logEnviron': self.logEnviron, })
+        cmd = remotecommand.RemoteCommand('rmdir',
+                                          {'dir': 'build',
+                                           'logEnviron': self.logEnviron})
         cmd.useLog(self.stdio_log, False)
         d = self.runCommand(cmd)
         d.addCallback(lambda _: self.incremental())
@@ -155,7 +157,7 @@ class Bzr(Source):
             cmd = remotecommand.RemoteCommand('cpdir',
                                               {'fromdir': 'source',
                                                'todir': 'build',
-                                               'logEnviron': self.logEnviron, })
+                                               'logEnviron': self.logEnviron})
             cmd.useLog(self.stdio_log, False)
             d = self.runCommand(cmd)
             return d
@@ -194,8 +196,8 @@ class Bzr(Source):
                 return res
             delay, repeats = self.retry
             if repeats > 0:
-                log.msg("Checkout failed, trying %d more times after %d seconds"
-                        % (repeats, delay))
+                log.msg("Checkout failed, trying %d more times after %d "
+                        "seconds" % (repeats, delay))
                 self.retry = (delay, repeats - 1)
                 df = defer.Deferred()
                 df.addCallback(lambda _: self._clobber())
@@ -221,7 +223,8 @@ class Bzr(Source):
         return d
 
     def _sourcedirIsUpdatable(self):
-        return self.pathExists(self.build.path_module.join(self.workdir, '.bzr'))
+        return self.pathExists(self.build.path_module.join(self.workdir,
+                                                           '.bzr'))
 
     def computeSourceRevision(self, changes):
         if not changes:

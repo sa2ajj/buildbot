@@ -166,11 +166,11 @@ class Connection(base.Connection, pb.Avatar):
         defer.returnValue(info)
 
     def remoteSetBuilderList(self, builders):
+        d = self.mind.callRemote('setBuilderList', builders)
+        @d.addCallback
         def cache_builders(builders):
             self.builders = builders
             return builders
-        d = self.mind.callRemote('setBuilderList', builders)
-        d.addCallback(cache_builders)
         return d
 
     def remoteStartCommand(self, remoteCommand, builderName, commandId, commandName, args):
@@ -188,15 +188,16 @@ class Connection(base.Connection, pb.Avatar):
             d = self.mind.callRemote('shutdown')
             d.addCallback(lambda _: True)  # successful shutdown request
 
+            @d.addErrback
             def check_nsm(f):
                 f.trap(pb.NoSuchMethod)
                 return False  # fall through to the old way
-            d.addErrback(check_nsm)
 
+            @d.addErrback
             def check_connlost(f):
                 f.trap(pb.PBConnectionLost)
                 return True  # the slave is gone, so call it finished
-            d.addErrback(check_connlost)
+
             return d
 
         if (yield new_way()):

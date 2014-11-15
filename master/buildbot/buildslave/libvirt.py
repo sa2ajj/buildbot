@@ -291,17 +291,17 @@ class LibVirtSlave(AbstractLatentBuildSlave):
         else:
             d = domain.destroy()
 
+        @d.addCallback
         def _disconnect(res):
             log.msg("VM destroyed (%s): Forcing its connection closed." % self.name)
             return AbstractBuildSlave.disconnect(self)
-        d.addCallback(_disconnect)
 
+        @d.addBoth
         def _disconnected(res):
             log.msg("We forced disconnection (%s), cleaning up and triggering new build" % self.name)
             if self.base_image:
                 os.remove(self.image)
             self.botmaster.maybeStartBuildsForSlave(self.name)
             return res
-        d.addBoth(_disconnected)
 
         return d
