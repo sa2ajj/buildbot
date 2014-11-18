@@ -47,10 +47,10 @@ except ImportError:
   pass
 """,
 """
-buildmaster_host = %(host)r
-port = %(port)d
-slavename = %(name)r
-passwd = %(passwd)r
+buildmaster_host = os.environ.get('BUILDBOT_MASTER_HOST', %(host)r)
+port = os.environ.get('BUILDBOT_MASTER_PORT', %(port)d)
+slavename = os.environ.get('BUILDBOT_SLAVE_NAME', %(name)r)
+passwd = os.environ.get('BUILDBOT_SLAVE_PASS', %(passwd)r)
 keepalive = %(keepalive)d
 usepty = %(usepty)d
 umask = %(umask)s
