@@ -680,7 +680,7 @@ This will fetch a number of dependencies from pypi, the Python package repositor
 This will also fetch a bunch a bunch of node.js dependencies used for building the web application, and a bunch of client side js dependencies, with bower
 
 Now you'll need to create a master instance.
-For a bit more detail, see the Buildbot tutorial (:ref:`first-run-label`).
+For a bit more detail, see the Buildbot tutorial (:doc:`../tutorial/firstrun`).
 
 .. code-block:: none
 

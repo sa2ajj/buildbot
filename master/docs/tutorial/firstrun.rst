@@ -1,5 +1,3 @@
-.. _first-run-label:
-
 =========
 First Run
 =========

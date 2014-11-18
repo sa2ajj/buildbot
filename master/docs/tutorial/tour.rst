@@ -7,7 +7,7 @@ A Quick Tour
 Goal
 ----
 
-This tutorial will expand on the :ref:`first-run-label` tutorial by taking a quick tour around some of the features of buildbot that are hinted at in the comments in the sample configuration.
+This tutorial will expand on the :doc:`firstrun` tutorial by taking a quick tour around some of the features of buildbot that are hinted at in the comments in the sample configuration.
 We will simply change parts of the default configuration and explain the activated features.
 
 As a part of this tutorial, we will make buildbot do a few actual builds.
@@ -26,7 +26,7 @@ Setting Project Name and URL
 
 Let's start simple by looking at where you would customize the buildbot's project name and URL.
 
-We continue where we left off in the :ref:`first-run-label` tutorial.
+We continue where we left off in the :doc:`firstrun` tutorial.
 
 Open a new terminal, and first enter the same sandbox you created before (where ``$EDITOR`` is your editor of choice like vim, gedit, or emacs):
 
