@@ -175,11 +175,12 @@ The tool for that job is :ref:`Interpolate`.
 
 The more common pattern is to use Python dictionary-style string interpolation by using the ``%(prop:<propname>)s`` syntax.
 In this form, the property name goes in the parentheses, as above.
-A common mistake is to omit the trailing "s", leading to a rather obscure error from Python ("ValueError: unsupported format character").
+A common mistake is to omit the trailing `s`, leading to a rather obscure error from Python (`ValueError: unsupported format character`).
 
 ::
 
     from buildbot.plugins import steps, util
+
     f.addStep(steps.ShellCommand(command=['make',
                                           util.Interpolate('REVISION=%(prop:got_revision)s'),
                                           'dist']))
@@ -190,7 +191,7 @@ This example will result in a ``make`` command with an argument like ``REVISION=
 
 The syntax of dictionary-style interpolation is a selector, followed by a colon, followed by a selector specific key, optionally followed by a colon and a string indicating how to interpret the value produced by the key.
 
-The following selectors are supported.
+The following selectors are supported:
 
 ``prop``
     The key is the name of a property.
@@ -210,7 +211,7 @@ The following ways of interpreting the value are available.
 
 ``~replacement``
     Like ``-replacement``, but only substitutes the value of the key if it is something Python regards as ``True``.
-    Python considers ``None``, 0, empty lists, and the empty string to be false, so such values will be replaced by ``replacement``.
+    Python considers ``None``, 0, empty lists, and the empty string to be ``False``, so such values will be replaced by ``replacement``.
 
 ``+replacement``
     If the key exists, substitute ``replacement``; otherwise, substitute an empty string.
@@ -228,6 +229,7 @@ Although these are similar to shell substitutions, no other substitutions are cu
 Example::
 
     from buildbot.plugins import steps, util
+
     f.addStep(steps.ShellCommand(command=['make',
                                           util.Interpolate('REVISION=%(prop:got_revision:-%(src::revision:-unknown)s)s'),
                                           'dist']))
