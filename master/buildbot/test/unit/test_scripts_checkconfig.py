@@ -15,7 +15,7 @@
 
 from __future__ import with_statement
 
-import cStringIO
+from io import StringIO
 import mock
 import os
 import re
@@ -55,8 +55,8 @@ class TestConfigLoader(dirs.DirsMixin, unittest.TestCase):
                 f.write(contents)
 
         old_stdout, old_stderr = sys.stdout, sys.stderr
-        stdout = sys.stdout = cStringIO.StringIO()
-        stderr = sys.stderr = cStringIO.StringIO()
+        stdout = sys.stdout = StringIO()
+        stderr = sys.stderr = StringIO()
         try:
             checkconfig._loadConfig(
                 basedir='configdir', configFile="master.cfg", quiet=False)

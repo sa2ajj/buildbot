@@ -13,11 +13,7 @@
 #
 # Copyright Buildbot Team Members
 
-try:
-    import cStringIO as StringIO
-    assert StringIO
-except ImportError:
-    import StringIO
+from io import StringIO
 import re
 
 from twisted.internet import defer
@@ -208,8 +204,7 @@ class SyncLogFileWrapper(logobserver.LogObserver):
 
     def readlines(self):
         alltext = "".join(self.getChunks([self.STDOUT], onlyText=True))
-        io = StringIO.StringIO(alltext)
-        return io.readlines()
+        return StringIO(alltext).readlines()
 
     def getChunks(self, channels=[], onlyText=False):
         chunks = self.chunks

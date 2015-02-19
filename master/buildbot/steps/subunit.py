@@ -14,7 +14,7 @@
 # Copyright Buildbot Team Members
 
 
-from StringIO import StringIO
+from io import StringIO
 from buildbot.process import logobserver
 from buildbot.status.results import FAILURE
 from buildbot.status.results import SKIPPED

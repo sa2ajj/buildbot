@@ -13,7 +13,7 @@
 #
 # Copyright Buildbot Team Members
 
-import cStringIO
+from io import StringIO
 import os
 import sys
 
@@ -43,7 +43,7 @@ class StdoutAssertionsMixin(object):
     """
 
     def setUpStdoutAssertions(self):
-        self.stdout = cStringIO.StringIO()
+        self.stdout = StringIO()
         self.patch(sys, 'stdout', self.stdout)
 
     def assertWasQuiet(self):

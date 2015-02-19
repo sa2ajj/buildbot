@@ -13,7 +13,7 @@
 #
 # Copyright Buildbot Team Members
 
-from StringIO import StringIO
+from io import StringIO
 from mock import Mock
 
 from twisted.internet import defer

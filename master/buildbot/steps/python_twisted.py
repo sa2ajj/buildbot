@@ -14,6 +14,9 @@
 # Copyright Buildbot Team Members
 
 
+from io import StringIO
+import re
+
 from twisted.python import log
 
 from buildbot.process import logobserver
@@ -23,13 +26,6 @@ from buildbot.status.results import SKIPPED
 from buildbot.status.results import SUCCESS
 from buildbot.status.results import WARNINGS
 from buildbot.steps.shell import ShellCommand
-
-try:
-    import cStringIO
-    StringIO = cStringIO
-except ImportError:
-    import StringIO
-import re
 
 # BuildSteps that are specific to the Twisted source tree
 
@@ -544,7 +540,7 @@ class Trial(ShellCommand):
         if problems:
             self.addCompleteLog("problems", problems)
             # now parse the problems for per-test results
-            pio = StringIO.StringIO(problems)
+            pio = StringIO(problems)
             pio.readline()  # eat the first separator line
             testname = None
             done = False

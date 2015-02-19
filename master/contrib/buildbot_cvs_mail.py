@@ -36,7 +36,7 @@ import sys
 import textwrap
 import time
 
-from cStringIO import StringIO
+from io import StringIO
 from email.Utils import formataddr
 
 try:

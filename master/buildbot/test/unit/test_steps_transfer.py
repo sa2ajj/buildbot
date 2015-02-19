@@ -15,6 +15,7 @@
 
 from __future__ import with_statement
 
+from io import StringIO
 import os
 import shutil
 import stat
@@ -37,8 +38,6 @@ from buildbot.test.fake.remotecommand import Expect
 from buildbot.test.fake.remotecommand import ExpectRemoteRef
 from buildbot.test.util import steps
 from buildbot.util import json
-
-from cStringIO import StringIO
 
 
 def uploadString(string, timestamp=None):

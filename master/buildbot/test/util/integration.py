@@ -13,7 +13,7 @@
 #
 # Copyright Buildbot Team Members
 
-import StringIO
+from io import StringIO
 import mock
 import os
 import sys
@@ -89,7 +89,7 @@ class RunMasterBase(dirs.DirsMixin, www.RequiresWwwMixin, unittest.TestCase):
     @defer.inlineCallbacks
     def tearDown(self):
         if not self._passed:
-            dump = StringIO.StringIO()
+            dump = StringIO()
             print >> dump, "FAILED! dumping build db for debug"
             builds = yield self.master.data.get(("builds",))
             for build in builds:

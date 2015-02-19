@@ -18,7 +18,7 @@ import re
 import types
 import urllib
 
-from StringIO import StringIO
+from io import StringIO
 from email.message import Message
 from email.mime.multipart import MIMEMultipart
 from email.mime.nonmultipart import MIMENonMultipart

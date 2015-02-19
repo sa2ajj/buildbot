@@ -15,7 +15,7 @@
 
 from __future__ import with_statement
 
-import cStringIO
+from io import StringIO
 import getpass
 import mock
 import os
@@ -838,7 +838,7 @@ class TestRun(unittest.TestCase):
 
     def test_run_bad(self):
         self.patch(sys, 'argv', ['buildbot', 'my', '-l'])
-        stdout = cStringIO.StringIO()
+        stdout = StringIO()
         self.patch(sys, 'stdout', stdout)
         try:
             runner.run()

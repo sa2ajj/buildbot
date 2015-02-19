@@ -15,12 +15,12 @@
 
 from __future__ import with_statement
 
+from io import StringIO
 import os
 import sys
 
 from buildbot.scripts import tryserver
 from buildbot.test.util import dirs
-from cStringIO import StringIO
 from twisted.trial import unittest
 
 

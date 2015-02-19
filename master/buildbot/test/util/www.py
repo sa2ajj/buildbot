@@ -22,7 +22,7 @@ import urllib
 from buildbot.test.fake import fakemaster
 from buildbot.util import json
 from buildbot.www import auth
-from cStringIO import StringIO
+from io import StringIO
 from twisted.internet import defer
 from twisted.web import server
 from uuid import uuid1

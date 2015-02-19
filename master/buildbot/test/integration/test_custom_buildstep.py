@@ -15,7 +15,7 @@
 
 import mock
 
-from StringIO import StringIO
+from io import StringIO
 
 from buildbot import config
 from buildbot.buildslave.base import BuildSlave

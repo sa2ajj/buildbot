@@ -15,7 +15,7 @@
 
 from __future__ import with_statement
 
-import cStringIO
+from io import StringIO
 import os
 import string
 import textwrap
@@ -32,7 +32,7 @@ class TestIBD(dirs.DirsMixin, misc.StdoutAssertionsMixin, unittest.TestCase):
 
     def setUp(self):
         self.setUpDirs('test')
-        self.stdout = cStringIO.StringIO()
+        self.stdout = StringIO()
         self.setUpStdoutAssertions()
 
     def test_isBuildmasterDir_no_dir(self):

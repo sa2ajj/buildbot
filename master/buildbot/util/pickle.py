@@ -22,7 +22,7 @@ import os
 import sys
 
 from bz2 import BZ2File
-from cStringIO import StringIO
+from io import StringIO
 from gzip import GzipFile
 
 from buildbot import interfaces

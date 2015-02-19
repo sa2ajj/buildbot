@@ -16,11 +16,7 @@
 import os
 import tarfile
 import tempfile
-try:
-    from cStringIO import StringIO
-    assert StringIO
-except ImportError:
-    from StringIO import StringIO
+from io import StringIO
 
 
 from buildbot.buildslave.protocols import base

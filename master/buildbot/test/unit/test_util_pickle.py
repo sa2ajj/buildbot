@@ -13,7 +13,7 @@
 #
 # Copyright Buildbot Team Members
 
-import cStringIO
+from io import StringIO
 
 from buildbot.util import pickle
 from twisted.trial import unittest
@@ -35,7 +35,7 @@ class Tests(unittest.TestCase):
         self.assertIsInstance(obj[1], TestClass)
 
     def test_load(self):
-        f = cStringIO.StringIO(self.simplePickle)
+        f = StringIO(self.simplePickle)
         obj = pickle.load(f)
         self.assertSimplePickleContents(obj)
 

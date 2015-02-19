@@ -13,7 +13,7 @@
 #
 # Copyright Buildbot Team Members
 
-import StringIO
+from io import StringIO
 import mock
 
 from buildbot import interfaces
@@ -38,7 +38,7 @@ class TestSetPropertiesFromEnv(steps.BuildStepMixin, unittest.TestCase):
         self.logobserver.errors = []
         self.logobserver.skips = []
         self.logobserver.testsRun = 0
-        self.logobserver.warningio = StringIO.StringIO()
+        self.logobserver.warningio = StringIO()
         self.patch(subunit, 'SubunitLogObserver',
                    lambda: self.logobserver)
         return self.setUpBuildStep()
