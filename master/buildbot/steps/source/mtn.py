@@ -23,7 +23,6 @@ from buildbot.config import ConfigErrors
 from buildbot.interfaces import BuildSlaveTooOldError
 from buildbot.process import buildstep
 from buildbot.process import remotecommand
-from buildbot.status.results import SUCCESS
 from buildbot.steps.source.base import Source
 
 
@@ -35,6 +34,7 @@ class Monotone(Source):
 
     renderables = ['repourl']
     possible_methods = ('clobber', 'copy', 'fresh', 'clean')
+    vccmd = ['mtn']
 
     def __init__(self, repourl=None, branch=None, progress=False, mode='incremental',
                  method=None, **kwargs):
@@ -184,9 +184,9 @@ class Monotone(Source):
     @defer.inlineCallbacks
     def clean(self, ignore_ignored=True):
         files = []
-        commands = [['mtn', 'ls', 'unknown']]
+        commands = [['ls', 'unknown']]
         if not ignore_ignored:
-            commands.append(['mtn', 'ls', 'ignored'])
+            commands.append(['ls', 'ignored'])
         for cmd in commands:
             stdout = yield self._dovccmd(cmd, collectStdout=True)
             if len(stdout) == 0:
@@ -217,13 +217,13 @@ class Monotone(Source):
         defer.returnValue(0)
 
     def _clone(self, abandonOnFailure=False):
-        command = ['mtn', 'db', 'init', '--db', self.database]
+        command = ['db', 'init', '--db', self.database]
         d = self._dovccmd(command, abandonOnFailure=abandonOnFailure)
         d.addCallback(lambda _: self._pull())
         return d
 
     def _checkout(self, abandonOnFailure=False):
-        command = ['mtn', 'checkout', '.', '--db=%s' % (self.database)]
+        command = ['checkout', '.', '--db=%s' % (self.database)]
         if self.revision:
             command.extend(['--revision', self.revision])
         command.extend(['--branch', self.branch])
@@ -235,7 +235,7 @@ class Monotone(Source):
             d = self._pull()
         else:
             d = defer.succeed(0)
-        command = ['mtn', 'update', '--db=%s' % (self.database)]
+        command = ['update', '--db=%s' % (self.database)]
         if self.revision:
             command.extend(['--revision', self.revision])
         else:
@@ -246,7 +246,7 @@ class Monotone(Source):
         return d
 
     def _pull(self, abandonOnFailure=False):
-        command = ['mtn', 'pull', self.sourcedata,
+        command = ['pull', self.sourcedata,
                    '--db=%s' % (self.database)]
         if self.progress:
             command.extend(['--ticker=dot'])
@@ -285,7 +285,7 @@ class Monotone(Source):
 
     @defer.inlineCallbacks
     def parseGotRevision(self, _=None):
-        stdout = yield self._dovccmd(['mtn', 'automate', 'select', 'w:'], collectStdout=True)
+        stdout = yield self._dovccmd(['automate', 'select', 'w:'], collectStdout=True)
         revision = stdout.strip()
         if len(revision) != 40:
             raise buildstep.BuildStepFailed()
@@ -293,37 +293,8 @@ class Monotone(Source):
         self.updateSourceProperty('got_revision', revision)
         defer.returnValue(0)
 
-    def _dovccmd(self, command, collectStdout=False, initialStdin=None, decodeRC=None,
-                 abandonOnFailure=True, wkdir=None):
-        if not command:
-            raise ValueError("No command specified")
-
-        if decodeRC is None:
-            decodeRC = {0: SUCCESS}
-        workdir = wkdir or self.workdir
-        cmd = remotecommand.RemoteShellCommand(workdir, command,
-                                               env=self.env,
-                                               logEnviron=self.logEnviron,
-                                               timeout=self.timeout,
-                                               collectStdout=collectStdout,
-                                               initialStdin=initialStdin,
-                                               decodeRC=decodeRC)
-        cmd.useLog(self.stdio_log, False)
-        d = self.runCommand(cmd)
-
-        @d.addCallback
-        def evaluateCommand(_):
-            if abandonOnFailure and cmd.didFail():
-                log.msg("Source step failed while running command %s" % cmd)
-                raise buildstep.BuildStepFailed()
-            if collectStdout:
-                return cmd.stdout
-            else:
-                return cmd.rc
-        return d
-
     def _checkDb(self):
-        d = self._dovccmd(['mtn', 'db', 'info', '--db', self.database], collectStdout=True)
+        d = self._dovccmd(['db', 'info', '--db', self.database], collectStdout=True)
 
         @d.addCallback
         def checkInfo(stdout):
@@ -332,7 +303,7 @@ class Monotone(Source):
                 return 0
             elif stdout.find("(migration needed)") > 0:
                 log.msg("Older format database found, migrating it")
-                return self._dovccmd(['mtn', 'db', 'migrate', '--db', self.database])
+                return self._dovccmd(['db', 'migrate', '--db', self.database])
             elif stdout.find("(too new, cannot use)") > 0:
                 log.msg("The database is of a newer format than mtn can handle...  Abort!")
                 raise buildstep.BuildStepFailed()

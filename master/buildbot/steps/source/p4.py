@@ -214,36 +214,6 @@ class P4(Source):
         command = [c.encode('utf-8') for c in command]
         return command
 
-    def _dovccmd(self, command, collectStdout=False, initialStdin=None):
-        command = self._buildVCCommand(command)
-
-        if debug_logging:
-            log.msg("P4:_dovccmd():workdir->%s" % self.workdir)
-
-        cmd = buildstep.RemoteShellCommand(self.workdir, command,
-                                           env=self.env,
-                                           logEnviron=self.logEnviron,
-                                           timeout=self.timeout,
-                                           collectStdout=collectStdout,
-                                           initialStdin=initialStdin,)
-        cmd.useLog(self.stdio_log, False)
-        if debug_logging:
-            log.msg("Starting p4 command : p4 %s" % (" ".join(command),))
-
-        d = self.runCommand(cmd)
-
-        @d.addCallback
-        def evaluateCommand(_):
-            if cmd.rc != 0:
-                if debug_logging:
-                    log.msg("P4:_dovccmd():Source step failed while running command %s" % cmd)
-                raise buildstep.BuildStepFailed()
-            if collectStdout:
-                return cmd.stdout
-            else:
-                return cmd.rc
-        return d
-
     def _getMethod(self):
         if self.method is not None and self.mode != 'incremental':
             return self.method

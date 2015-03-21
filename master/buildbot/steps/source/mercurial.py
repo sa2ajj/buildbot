@@ -21,7 +21,6 @@ from twisted.python import log
 
 from buildbot.config import ConfigErrors
 from buildbot.interfaces import BuildSlaveTooOldError
-from buildbot.process import buildstep
 from buildbot.process import remotecommand
 from buildbot.status.results import SUCCESS
 from buildbot.steps.source.base import Source
@@ -35,6 +34,7 @@ class Mercurial(Source):
     renderables = ["repourl"]
     possible_methods = (None, 'clean', 'fresh', 'clobber')
     possible_branchTypes = ('inrepo', 'dirname')
+    vccmd = ['hg', '--verbose']
 
     def __init__(self, repourl=None, mode='incremental',
                  method=None, defaultBranch=None, branchType='dirname',
@@ -225,34 +225,6 @@ class Mercurial(Source):
         command = ['pull', self.repourl]
         d = self._dovccmd(command)
         d.addCallback(self._checkBranchChange)
-        return d
-
-    def _dovccmd(self, command, collectStdout=False, initialStdin=None, decodeRC=None,
-                 abandonOnFailure=True):
-        if not command:
-            raise ValueError("No command specified")
-
-        if decodeRC is None:
-            decodeRC = {0: SUCCESS}
-        cmd = remotecommand.RemoteShellCommand(self.workdir, ['hg', '--verbose'] + command,
-                                               env=self.env,
-                                               logEnviron=self.logEnviron,
-                                               timeout=self.timeout,
-                                               collectStdout=collectStdout,
-                                               initialStdin=initialStdin,
-                                               decodeRC=decodeRC)
-        cmd.useLog(self.stdio_log, False)
-        d = self.runCommand(cmd)
-
-        @d.addCallback
-        def evaluateCommand(_):
-            if abandonOnFailure and cmd.didFail():
-                log.msg("Source step failed while running command %s" % cmd)
-                raise buildstep.BuildStepFailed()
-            if collectStdout:
-                return cmd.stdout
-            else:
-                return cmd.rc
         return d
 
     def computeSourceRevision(self, changes):

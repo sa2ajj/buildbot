@@ -29,6 +29,7 @@ class Bzr(Source):
 
     name = 'bzr'
     renderables = ['repourl', 'baseURL']
+    vccmd = ['bzr']
 
     def __init__(self, repourl=None, baseURL=None, mode='incremental',
                  method=None, defaultBranch=None, **kwargs):
@@ -227,26 +228,6 @@ class Bzr(Source):
             return None
         lastChange = max([int(c.revision) for c in changes])
         return lastChange
-
-    def _dovccmd(self, command, abandonOnFailure=True, collectStdout=False):
-        cmd = remotecommand.RemoteShellCommand(self.workdir, ['bzr'] + command,
-                                               env=self.env,
-                                               logEnviron=self.logEnviron,
-                                               timeout=self.timeout,
-                                               collectStdout=collectStdout)
-        cmd.useLog(self.stdio_log, False)
-        d = self.runCommand(cmd)
-
-        @d.addCallback
-        def evaluateCommand(_):
-            if abandonOnFailure and cmd.didFail():
-                log.msg("Source step failed while running command %s" % cmd)
-                raise buildstep.BuildStepFailed()
-            if collectStdout:
-                return cmd.stdout
-            else:
-                return cmd.rc
-        return d
 
     def checkBzr(self):
         d = self._dovccmd(['--version'])

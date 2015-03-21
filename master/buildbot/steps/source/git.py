@@ -64,6 +64,7 @@ class Git(Source):
     """ Class for Git with all the smarts """
     name = 'git'
     renderables = ["repourl", "reference", "branch", "codebase", "mode", "method"]
+    vccmd = ['git']
 
     def __init__(self, repourl=None, branch='HEAD', mode='incremental', method=None,
                  reference=None, submodules=False, shallow=False, progress=False, retryFetch=False,
@@ -337,33 +338,13 @@ class Git(Source):
 
         defer.returnValue(0)
 
-    def _dovccmd(self, command, abandonOnFailure=True, collectStdout=False, initialStdin=None):
-        full_command = ['git']
+    def _getVCConfig(self):
+        config_options = []
         if self.config is not None:
             for name, value in self.config.iteritems():
-                full_command.append('-c')
-                full_command.append('%s=%s' % (name, value))
-        full_command.extend(command)
-        cmd = remotecommand.RemoteShellCommand(self.workdir,
-                                               full_command,
-                                               env=self.env,
-                                               logEnviron=self.logEnviron,
-                                               timeout=self.timeout,
-                                               collectStdout=collectStdout,
-                                               initialStdin=initialStdin)
-        cmd.useLog(self.stdio_log, False)
-        d = self.runCommand(cmd)
-
-        @d.addCallback
-        def evaluateCommand(_):
-            if abandonOnFailure and cmd.didFail():
-                log.msg("Source step failed while running command %s" % cmd)
-                raise buildstep.BuildStepFailed()
-            if collectStdout:
-                return cmd.stdout
-            else:
-                return cmd.rc
-        return d
+                config_options.append('-c')
+                config_options.append('%s=%s' % (name, value))
+        return config_options
 
     def _fetch(self, _):
         command = ['fetch', '-t', self.repourl, self.branch]

@@ -40,6 +40,7 @@ class SVN(Source):
 
     renderables = ['repourl']
     possible_methods = ('clean', 'fresh', 'clobber', 'copy', 'export', None)
+    vccmd = ['svn']
 
     def __init__(self, repourl=None, mode='incremental',
                  method=None, username=None,
@@ -213,41 +214,17 @@ class SVN(Source):
         d.addCallback(self.finished)
         return d
 
-    def _dovccmd(self, command, collectStdout=False, collectStderr=False, abandonOnFailure=True):
-        assert command, "No command specified"
-        command.extend(['--non-interactive', '--no-auth-cache'])
+    def _buildVCCommand(self, doCommand):
+        doCommand.extend(['--non-interactive', '--no-auth-cache'])
         if self.username:
-            command.extend(['--username', self.username])
+            doCommand.extend(['--username', self.username])
         if self.password is not None:
-            command.extend(['--password', self.password])
+            doCommand.extend(['--password', self.password])
         if self.depth:
-            command.extend(['--depth', self.depth])
+            doCommand.extend(['--depth', self.depth])
         if self.extra_args:
-            command.extend(self.extra_args)
-
-        cmd = remotecommand.RemoteShellCommand(self.workdir, ['svn'] + command,
-                                               env=self.env,
-                                               logEnviron=self.logEnviron,
-                                               timeout=self.timeout,
-                                               collectStdout=collectStdout,
-                                               collectStderr=collectStderr)
-        cmd.useLog(self.stdio_log, False)
-        d = self.runCommand(cmd)
-
-        @d.addCallback
-        def evaluateCommand(_):
-            if cmd.didFail() and abandonOnFailure:
-                log.msg("Source step failed while running command %s" % cmd)
-                raise buildstep.BuildStepFailed()
-            if collectStdout and collectStderr:
-                return (cmd.stdout, cmd.stderr)
-            elif collectStdout:
-                return cmd.stdout
-            elif collectStderr:
-                return cmd.stderr
-            else:
-                return cmd.rc
-        return d
+            doCommand.extend(self.extra_args)
+        return Source._buildVCCommand(self, doCommand)
 
     def _getMethod(self):
         if self.method is not None and self.mode != 'incremental':

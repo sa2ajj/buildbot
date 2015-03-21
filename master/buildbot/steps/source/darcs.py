@@ -24,7 +24,6 @@ from buildbot.interfaces import BuildSlaveTooOldError
 from buildbot.process import buildstep
 from buildbot.process import remotecommand
 from buildbot.process import remotetransfer
-from buildbot.status.results import SUCCESS
 from buildbot.steps.source.base import Source
 
 
@@ -36,6 +35,7 @@ class Darcs(Source):
 
     renderables = ['repourl']
     possible_methods = ('clobber', 'copy')
+    vccmd = ['darcs']
 
     def __init__(self, repourl=None, mode='incremental',
                  method=None, **kwargs):
@@ -121,7 +121,7 @@ class Darcs(Source):
         if not updatable:
             yield self._checkout()
         else:
-            command = ['darcs', 'pull', '--all', '--verbose']
+            command = ['pull', '--all', '--verbose']
             yield self._dovccmd(command)
 
     def copy(self):
@@ -157,7 +157,7 @@ class Darcs(Source):
         return d
 
     def _clone(self, abandonOnFailure=False):
-        command = ['darcs', 'get', '--verbose', '--lazy', '--repo-name', self.workdir]
+        command = ['get', '--verbose', '--lazy', '--repo-name', self.workdir]
         d = defer.succeed(0)
         if self.revision:
             d.addCallback(lambda _: self._downloadFile(self.revision, '.darcs-context'))
@@ -166,7 +166,7 @@ class Darcs(Source):
 
         command.append(self.repourl)
         d.addCallback(lambda _: self._dovccmd(command, abandonOnFailure=abandonOnFailure,
-                                              wkdir='.'))
+                                              workdir='.'))
 
         return d
 
@@ -212,38 +212,9 @@ class Darcs(Source):
 
     @defer.inlineCallbacks
     def parseGotRevision(self, _):
-        revision = yield self._dovccmd(['darcs', 'changes', '--max-count=1'], collectStdout=True)
+        revision = yield self._dovccmd(['changes', '--max-count=1'], collectStdout=True)
         self.updateSourceProperty('got_revision', revision)
         defer.returnValue(0)
-
-    def _dovccmd(self, command, collectStdout=False, initialStdin=None, decodeRC=None,
-                 abandonOnFailure=True, wkdir=None):
-        if not command:
-            raise ValueError("No command specified")
-
-        if decodeRC is None:
-            decodeRC = {0: SUCCESS}
-        workdir = wkdir or self.workdir
-        cmd = remotecommand.RemoteShellCommand(workdir, command,
-                                               env=self.env,
-                                               logEnviron=self.logEnviron,
-                                               timeout=self.timeout,
-                                               collectStdout=collectStdout,
-                                               initialStdin=initialStdin,
-                                               decodeRC=decodeRC)
-        cmd.useLog(self.stdio_log, False)
-        d = self.runCommand(cmd)
-
-        @d.addCallback
-        def evaluateCommand(_):
-            if abandonOnFailure and cmd.didFail():
-                log.msg("Source step failed while running command %s" % cmd)
-                raise buildstep.BuildStepFailed()
-            if collectStdout:
-                return cmd.stdout
-            else:
-                return cmd.rc
-        return d
 
     def _sourcedirIsUpdatable(self):
         return self.pathExists(self.build.path_module.join(self.workdir, '_darcs'))

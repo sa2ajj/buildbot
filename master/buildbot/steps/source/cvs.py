@@ -32,8 +32,8 @@ from buildbot.steps.source.base import Source
 class CVS(Source):
 
     name = "cvs"
-
     renderables = ["cvsroot"]
+    vccmd = ['cvs']
 
     def __init__(self, cvsroot=None, cvsmodule='', mode='incremental',
                  method=None, branch=None, global_options=None, extra_options=None,
@@ -208,7 +208,8 @@ class CVS(Source):
             abandonOnFailure = (self.retry[1] <= 0)
         else:
             abandonOnFailure = True
-        d = self._dovccmd(command, '', abandonOnFailure=abandonOnFailure)
+        d = self._dovccmd(command, abandonOnFailure=abandonOnFailure,
+                          workdir='')
 
         def _retry(res):
             if self.stopped or res == 0:
@@ -259,29 +260,6 @@ class CVS(Source):
         else:
             d = defer.succeed(0)
 
-        return d
-
-    def _dovccmd(self, command, workdir=None, abandonOnFailure=True,
-                 initialStdin=None):
-        if workdir is None:
-            workdir = self.workdir
-        if not command:
-            raise ValueError("No command specified")
-        cmd = remotecommand.RemoteShellCommand(workdir,
-                                               ['cvs'] + command,
-                                               env=self.env,
-                                               timeout=self.timeout,
-                                               logEnviron=self.logEnviron,
-                                               initialStdin=initialStdin)
-        cmd.useLog(self.stdio_log, False)
-        d = self.runCommand(cmd)
-
-        @d.addCallback
-        def evaluateCommand(_):
-            if cmd.rc != 0 and abandonOnFailure:
-                log.msg("Source step failed while running command %s" % cmd)
-                raise buildstep.BuildStepFailed()
-            return cmd.rc
         return d
 
     def _cvsEntriesContainStickyDates(self, entries):

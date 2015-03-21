@@ -20,6 +20,7 @@ from buildbot.process import remotetransfer
 from buildbot.process.buildstep import LoggingBuildStep
 from buildbot.status.builder import FAILURE
 from buildbot.status.builder import SKIPPED
+from buildbot.status.results import SUCCESS
 from buildbot.steps.slave import CompositeStepMixin
 from twisted.python import log
 
@@ -325,3 +326,44 @@ class Source(LoggingBuildStep, CompositeStepMixin):
             patch = None
 
         self.startVC(branch, revision, patch)
+
+    def _getVCConfig(self):
+        return []
+
+    def _buildVCCommand(self, doCommand):
+        return self.vccmd + self._getVCConfig() + doCommand
+
+    def _dovccmd(self, command, abandonOnFailure=True, initialStdin=None,
+                 collectStdout=False, collectStderr=False, decodeRC=None,
+                 workdir=None):
+        if decodeRC is None:
+            decodeRC = {0: SUCCESS}
+        if workdir is None:
+            workdir = self.workdir
+        full_command = self._buildVCCommand(command)
+        cmd = remotecommand.RemoteShellCommand(workdir,
+                                               full_command,
+                                               env=self.env,
+                                               logEnviron=self.logEnviron,
+                                               timeout=self.timeout,
+                                               initialStdin=initialStdin,
+                                               collectStdout=collectStdout,
+                                               collectStderr=collectStderr,
+                                               decodeRC=decodeRC)
+        cmd.useLog(self.stdio_log, False)
+        d = self.runCommand(cmd)
+
+        @d.addCallback
+        def evaluateCommand(_):
+            if cmd.didFail() and abandonOnFailure:
+                log.msg("Source step failed while running command %s" % cmd)
+                raise buildstep.BuildStepFailed()
+            if collectStdout and collectStderr:
+                return (cmd.stdout, cmd.stderr)
+            elif collectStdout:
+                return cmd.stdout
+            elif collectStderr:
+                return cmd.stderr
+            else:
+                return cmd.rc
+        return d
