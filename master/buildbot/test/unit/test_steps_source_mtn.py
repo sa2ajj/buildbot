@@ -643,12 +643,12 @@ class TestMonotone(sourcesteps.SourceStepMixin, config.ConfigErrorsMixin, unitte
         return self.runStep()
 
     def test_incorrect_method(self):
-        self.assertRaisesConfigError("Invalid method for mode == full", lambda:
+        self.assertRaisesConfigError("Monotone: invalid method for mode == full", lambda:
                                      mtn.Monotone(repourl='mtn://localhost/monotone',
                                                   mode='full', method='wrongmethod', branch='master'))
 
     def test_incremental_invalid_method(self):
-        self.assertRaisesConfigError("Incremental mode does not require method", lambda:
+        self.assertRaisesConfigError("Monotone: incremental mode does not require method", lambda:
                                      mtn.Monotone(repourl='mtn://localhost/monotone',
                                                   mode='incremental', method='fresh', branch="master"))
 

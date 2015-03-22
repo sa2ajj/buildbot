@@ -51,22 +51,23 @@ class Monotone(Source):
         errors = []
 
         if not self._hasAttrGroupMember('mode', self.mode):
-            errors.append("mode %s is not one of %s" %
+            errors.append("Monotone: mode %s is not one of %s." %
                           (self.mode, self._listAttrGroupMembers('mode')))
         if self.mode == 'incremental' and self.method:
-            errors.append("Incremental mode does not require method")
+            errors.append("Monotone: incremental mode does not require method.")
 
         if self.mode == 'full':
             if self.method is None:
                 self.method = 'copy'
             elif self.method not in self.possible_methods:
-                errors.append("Invalid method for mode == %s" % (self.mode))
+                errors.append("Monotone: invalid method for mode == %s." %
+                              (self.mode))
 
         if repourl is None:
-            errors.append("you must provide repourl")
+            errors.append("Monotone: must provide repourl.")
 
         if branch is None:
-            errors.append("you must provide branch")
+            errors.append("Monotone: must provide branch.")
 
         if errors:
             raise ConfigErrors(errors)

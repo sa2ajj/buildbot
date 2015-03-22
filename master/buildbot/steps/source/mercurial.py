@@ -77,13 +77,13 @@ class Mercurial(Source):
 
         errors = []
         if not self._hasAttrGroupMember('mode', self.mode):
-            errors.append("mode %s is not one of %s" %
+            errors.append("Mercurial: mode %s is not one of %s." %
                           (self.mode, self._listAttrGroupMembers('mode')))
         if self.method not in self.possible_methods:
-            errors.append("method %s is not one of %s" %
+            errors.append("Mercurial: method %s is not one of %s." %
                           (self.method, self.possible_methods))
         if self.branchType not in self.possible_branchTypes:
-            errors.append("branchType %s is not one of %s" %
+            errors.append("Mercurial: branchType %s is not one of %s." %
                           (self.branchType, self.possible_branchTypes))
 
         if repourl is None:

@@ -18,7 +18,7 @@ from twisted.internet import defer
 from twisted.internet import reactor
 from twisted.python import log
 
-from buildbot import config as bbconfig
+from buildbot.config import ConfigErrors
 from buildbot.interfaces import BuildSlaveTooOldError
 from buildbot.process import buildstep
 from buildbot.process import remotecommand
@@ -129,19 +129,22 @@ class Git(Source):
         self.srcdir = 'source'
         Source.__init__(self, **kwargs)
 
+        errors = []
         if not self.repourl:
-            bbconfig.error("Git: must provide repourl.")
+            errors.append("Git: must provide repourl.")
         if isinstance(self.mode, basestring):
             if not self._hasAttrGroupMember('mode', self.mode):
-                bbconfig.error("Git: mode must be %s" %
-                               (' or '.join(self._listAttrGroupMembers('mode'))))
+                errors.append("Git: mode must be %s" %
+                              (' or '.join(self._listAttrGroupMembers('mode'))))
             if isinstance(self.method, basestring):
                 if (self.mode == 'full' and self.method not in ['clean', 'fresh', 'clobber', 'copy', None]):
-                    bbconfig.error("Git: invalid method for mode 'full'.")
+                    errors.append("Git: invalid method for mode 'full'.")
                 if self.shallow and (self.mode != 'full' or self.method != 'clobber'):
-                    bbconfig.error("Git: shallow only possible with mode 'full' and method 'clobber'.")
+                    errors.append("Git: shallow only possible with mode 'full' and method 'clobber'.")
         if not isinstance(self.getDescription, (bool, dict)):
-            bbconfig.error("Git: getDescription must be a boolean or a dict.")
+            errors.append("Git: getDescription must be a boolean or a dict.")
+        if errors:
+            raise ConfigErrors(errors)
 
     def startVC(self, branch, revision, patch):
         self.branch = branch or 'HEAD'

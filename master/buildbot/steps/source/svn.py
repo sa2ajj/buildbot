@@ -59,13 +59,14 @@ class SVN(Source):
         Source.__init__(self, **kwargs)
         errors = []
         if not self._hasAttrGroupMember('mode', self.mode):
-            errors.append("mode %s is not one of %s" %
+            errors.append("Svn: mode %s is not one of %s." %
                           (self.mode, self._listAttrGroupMembers('mode')))
         if self.method not in self.possible_methods:
-            errors.append("method %s is not one of %s" % (self.method, self.possible_methods))
+            errors.append("Svn: method %s is not one of %s." %
+                          (self.method, self.possible_methods))
 
         if repourl is None:
-            errors.append("you must provide repourl")
+            errors.append("Svn: you must provide repourl.")
 
         if errors:
             raise ConfigErrors(errors)

@@ -22,6 +22,7 @@ from twisted.internet import defer
 from twisted.internet import reactor
 from twisted.python import log
 
+from buildbot.config import ConfigErrors
 from buildbot.interfaces import BuildSlaveTooOldError
 from buildbot.process import buildstep
 from buildbot.process import remotecommand
@@ -53,9 +54,12 @@ class CVS(Source):
         self.method = method
         self.srcdir = 'source'
 
+        errors = []
         if not self._hasAttrGroupMember('mode', self.mode):
-            raise ValueError("mode %s is not one of %s" %
-                             (self.mode, self._listAttrGroupMembers('mode')))
+            errors.append("Cvs: mode %s is not one of %s." %
+                          (self.mode, self._listAttrGroupMembers('mode')))
+        if errors:
+            raise ConfigErrors(errors)
         Source.__init__(self, **kwargs)
 
     def startVC(self, branch, revision, patch):

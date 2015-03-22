@@ -19,6 +19,7 @@ from twisted.internet import defer
 from twisted.internet import reactor
 from twisted.python import log
 
+from buildbot.config import ConfigErrors
 from buildbot.interfaces import BuildSlaveTooOldError
 from buildbot.process import buildstep
 from buildbot.process import remotecommand
@@ -40,23 +41,28 @@ class Bzr(Source):
         self.mode = mode
         self.method = method
         Source.__init__(self, **kwargs)
+
+        errors = []
         if repourl and baseURL:
-            raise ValueError("you must provide exactly one of repourl and"
-                             " baseURL")
+            errors.append("Bzr: must provide exactly one of repourl and"
+                          " baseURL.")
 
         if repourl is None and baseURL is None:
-            raise ValueError("you must privide at least one of repourl and"
-                             " baseURL")
+            errors.append("Bzr: must privide at least one of repourl and"
+                          " baseURL.")
 
         if baseURL is not None and defaultBranch is None:
-            raise ValueError("you must provide defaultBranch with baseURL")
+            errors.append("Bzr: must provide defaultBranch with baseURL.")
 
         if not self._hasAttrGroupMember('mode', self.mode):
-            raise ValueError("mode %s is not one of %s" %
-                             (self.mode, self._listAttrGroupMembers('mode')))
+            errors.append("Bzr: mode %s is not one of %s." %
+                          (self.mode, self._listAttrGroupMembers('mode')))
 
         if self.mode == 'full':
-            assert self.method in ['clean', 'fresh', 'clobber', 'copy', None]
+            if self.method not in ['clean', 'fresh', 'clobber', 'copy', None]:
+                errors.append("Bzr: invalid method for mode 'full'.")
+        if errors:
+            raise ConfigErrors(errors)
 
     def startVC(self, branch, revision, patch):
         if branch:

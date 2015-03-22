@@ -16,8 +16,8 @@
 
 import re
 
-from buildbot import config
 from buildbot import interfaces
+from buildbot.config import ConfigErrors
 from buildbot.interfaces import BuildSlaveTooOldError
 from buildbot.process import buildstep
 from buildbot.process.properties import Interpolate
@@ -79,26 +79,36 @@ class P4(Source):
 
         Source.__init__(self, **kwargs)
 
+        errors = []
         if self.mode not in self.possible_modes and not interfaces.IRenderable.providedBy(self.mode):
-            config.error("mode %s is not an IRenderable, or one of %s" % (self.mode, self.possible_modes))
+            errors.append("P4: mode %s is not an IRenderable, or one of %s." %
+                          (self.mode, self.possible_modes))
 
         if not p4viewspec and p4base is None:
-            config.error("You must provide p4base or p4viewspec")
+            errors.append("P4: provide p4base or p4viewspec.")
 
         if p4viewspec and (p4base or p4branch or p4extra_views):
-            config.error("Either provide p4viewspec or p4base and p4branch (and optionally p4extra_views")
+            errors.append("P4: Either provide p4viewspec or p4base and p4branch"
+                          " (and optionally p4extra_views.")
 
         if p4viewspec and isinstance(p4viewspec, StringType):
-            config.error("p4viewspec must not be a string, and should be a sequence of 2 element sequences")
+            errors.append("P4: p4viewspec must not be a string,"
+                          " and should be a sequence of 2 element sequences.")
 
         if not interfaces.IRenderable.providedBy(p4base) and p4base and p4base.endswith('/'):
-            config.error('p4base should not end with a trailing / [p4base = %s]' % p4base)
+            errors.append('P4: p4base should not end with a trailing /'
+                          ' [p4base = %s].' % p4base)
 
         if not interfaces.IRenderable.providedBy(p4branch) and p4branch and p4branch.endswith('/'):
-            config.error('p4branch should not end with a trailing / [p4branch = %s]' % p4branch)
+            errors.append('P4: p4branch should not end with a trailing /'
+                          ' [p4branch = %s].' % p4branch)
 
         if (p4branch or p4extra_views) and not p4base:
-            config.error('If you specify either p4branch or p4extra_views you must also specify p4base')
+            errors.append('P4: If you specify either p4branch or p4extra_views'
+                          ' you must also specify p4base.')
+
+        if errors:
+            raise ConfigErrors(errors)
 
         if self.p4client_spec_options is None:
             self.p4client_spec_options = ''

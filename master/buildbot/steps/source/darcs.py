@@ -47,19 +47,20 @@ class Darcs(Source):
         errors = []
 
         if not self._hasAttrGroupMember('mode', self.mode):
-            errors.append("mode %s is not one of %s" %
+            errors.append("Darcs: mode %s is not one of %s." %
                           (self.mode, self._listAttrGroupMembers('mode')))
         if self.mode == 'incremental' and self.method:
-            errors.append("Incremental mode does not require method")
+            errors.append("Darcs: incremental mode does not require method.")
 
         if self.mode == 'full':
             if self.method is None:
                 self.method = 'copy'
             elif self.method not in self.possible_methods:
-                errors.append("Invalid method for mode == %s" % (self.mode))
+                errors.append("Darcs: invalid method for mode == %s." %
+                              (self.mode))
 
         if repourl is None:
-            errors.append("you must provide repourl")
+            errors.append("Darcs: must provide repourl.")
 
         if errors:
             raise ConfigErrors(errors)
