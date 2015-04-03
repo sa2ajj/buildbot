@@ -16,7 +16,7 @@
 import hmac
 import logging
 import re
-import requests
+from txrequests import Session
 
 from hashlib import sha1
 
@@ -201,7 +201,8 @@ class GitHubEventHandler(object):
             log.msg("Pull request `%s' not mergeable, ignoring" % branch)
             return changes
 
-        r = requests.get(payload['pull_request']['commits_url'] + "?per_page=100")
+        r = yield Session().get(payload['pull_request']['commits_url'] +
+                                "?per_page=100")
         commits = json.loads(r.text)
 
         for commit in commits:
@@ -214,8 +215,8 @@ class GitHubEventHandler(object):
             commit_url = ''
             if 'url' in commit:
                 commit_url = commit['url']
-                r = requests.get(commit_url)
-                commit_files = json.loads(r.text)
+                req = yield Session().get(commit_url)
+                commit_files = json.loads(req.text)
 
                 if commit_files and 'files' in commit_files:
                     for f in commit_files['files']:
