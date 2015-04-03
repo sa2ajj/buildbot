@@ -219,11 +219,7 @@ class GitHubEventHandler(object):
 
                 if commit_files and 'files' in commit_files:
                     for f in commit_files['files']:
-                        if f['status'] == 'added':
-                            files.append(f['filename'])
-                        if f['status'] == 'modified':
-                            files.append(f['filename'])
-                        if f['status'] == 'removed':
+                        if f['status'] in ('added', 'modified', 'removed'):
                             files.append(f['filename'])
 
             when_timestamp = dateparse(commit['commit']['author']['date'])
