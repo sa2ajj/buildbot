@@ -152,11 +152,8 @@ class CVS(Source):
         return d
 
     def copy(self):
-        cmd = remotecommand.RemoteCommand('rmdir', {'dir': self.workdir,
-                                                    'logEnviron': self.logEnviron,
-                                                    'timeout': self.timeout})
-        cmd.useLog(self.stdio_log, False)
-        d = self.runCommand(cmd)
+        d = self.runRmdir(self.workdir)
+
         old_workdir = self.workdir
         self.workdir = self.srcdir
         d.addCallback(self.mode_incremental)

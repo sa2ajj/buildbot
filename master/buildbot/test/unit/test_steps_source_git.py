@@ -1213,8 +1213,7 @@ class TestGit(sourcesteps.SourceStepMixin, config.ConfigErrorsMixin, unittest.Te
                                 logEnviron=True))
             + 1,
             Expect('rmdir', dict(dir='wkdir',
-                                 logEnviron=True,
-                                 timeout=1200)),
+                                 logEnviron=True)),
             Expect('listdir', {'dir': 'source', 'logEnviron': True,
                                'timeout': 1200})
             + Expect.update('files', ['.git'])

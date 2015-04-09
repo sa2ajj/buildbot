@@ -91,8 +91,7 @@ class TestDarcs(sourcesteps.SourceStepMixin, unittest.TestCase):
                                 logEnviron=True))
             + 1,
             Expect('rmdir', dict(dir='wkdir',
-                                 logEnviron=True,
-                                 timeout=1200))
+                                 logEnviron=True))
             + 0,
             Expect('stat', dict(file='source/_darcs',
                                 logEnviron=True))
@@ -125,8 +124,7 @@ class TestDarcs(sourcesteps.SourceStepMixin, unittest.TestCase):
                                 logEnviron=True))
             + 1,
             Expect('rmdir', dict(dir='wkdir',
-                                 logEnviron=True,
-                                 timeout=1200))
+                                 logEnviron=True))
             + 0,
             Expect('stat', dict(file='source/_darcs',
                                 logEnviron=True))
@@ -186,8 +184,7 @@ class TestDarcs(sourcesteps.SourceStepMixin, unittest.TestCase):
                                 logEnviron=True))
             + 0,
             Expect('rmdir', dict(dir='wkdir',
-                                 logEnviron=True,
-                                 timeout=1200))
+                                 logEnviron=True))
             + 0,
             Expect('stat', dict(file='source/_darcs',
                                 logEnviron=True))

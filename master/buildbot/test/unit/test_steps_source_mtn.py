@@ -562,8 +562,7 @@ class TestMonotone(sourcesteps.SourceStepMixin, config.ConfigErrorsMixin, unitte
                                 logEnviron=True))
             + 1,
             Expect('rmdir', dict(dir='wkdir',
-                                 logEnviron=True,
-                                 timeout=1200))
+                                 logEnviron=True))
             + 0,
             Expect('stat', dict(file='source/_MTN',
                                 logEnviron=True))
@@ -612,8 +611,7 @@ class TestMonotone(sourcesteps.SourceStepMixin, config.ConfigErrorsMixin, unitte
                                 logEnviron=True))
             + 1,
             Expect('rmdir', dict(dir='wkdir',
-                                 logEnviron=True,
-                                 timeout=1200))
+                                 logEnviron=True))
             + 0,
             Expect('stat', dict(file='source/_MTN',
                                 logEnviron=True))

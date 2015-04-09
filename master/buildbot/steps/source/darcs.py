@@ -125,11 +125,7 @@ class Darcs(Source):
             yield self._dovccmd(command)
 
     def copy(self):
-        cmd = remotecommand.RemoteCommand('rmdir', {'dir': self.workdir,
-                                                    'logEnviron': self.logEnviron,
-                                                    'timeout': self.timeout, })
-        cmd.useLog(self.stdio_log, False)
-        d = self.runCommand(cmd)
+        d = self.runRmdir(self.workdir)
 
         self.workdir = 'source'
         d.addCallback(self.mode_incremental)

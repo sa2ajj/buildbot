@@ -427,8 +427,7 @@ class TestCVS(sourcesteps.SourceStepMixin, unittest.TestCase):
                                 logEnviron=True))
             + 1,
             Expect('rmdir', dict(dir='wkdir',
-                                 logEnviron=True,
-                                 timeout=step.timeout))
+                                 logEnviron=True))
             + 0,
             Expect('uploadFile', dict(blocksize=32768, maxsize=None,
                                       slavesrc='Root', workdir='source/CVS',
@@ -469,8 +468,7 @@ class TestCVS(sourcesteps.SourceStepMixin, unittest.TestCase):
                                 logEnviron=True))
             + 1,
             Expect('rmdir', dict(dir='wkdir',
-                                 logEnviron=True,
-                                 timeout=step.timeout))
+                                 logEnviron=True))
             + 0,
             Expect('uploadFile', dict(blocksize=32768, maxsize=None,
                                       slavesrc='Root', workdir='source/CVS',

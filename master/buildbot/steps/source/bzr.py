@@ -144,10 +144,7 @@ class Bzr(Source):
         return d
 
     def copy(self):
-        cmd = remotecommand.RemoteCommand('rmdir', {'dir': 'build',
-                                                    'logEnviron': self.logEnviron, })
-        cmd.useLog(self.stdio_log, False)
-        d = self.runCommand(cmd)
+        d = self.runRmdir('build')
         d.addCallback(self.mode_incremental)
 
         @d.addCallback
