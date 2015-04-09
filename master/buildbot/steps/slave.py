@@ -250,10 +250,11 @@ class CompositeStepMixin():
         d.addCallback(lambda res: commandComplete(cmd))
         return d
 
-    def runRmdir(self, dir, **kwargs):
+    def runRmdir(self, dirname, **kwargs):
         """ remove a directory from the slave """
         return self.runRemoteCommand('rmdir',
-                                     {'dir': dir, 'logEnviron': self.logEnviron},
+                                     {'dir': dirname,
+                                      'logEnviron': self.logEnviron},
                                      **kwargs)
 
     def pathExists(self, path):
