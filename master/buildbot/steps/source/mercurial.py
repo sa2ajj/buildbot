@@ -233,7 +233,7 @@ class Mercurial(Source):
             raise ValueError("No command specified")
 
         if decodeRC is None:
-            decodeRC = {0: SUCCESS}
+            decodeRC = buildstep.DEFAULT_DECODE_RC
         cmd = remotecommand.RemoteShellCommand(self.workdir, ['hg', '--verbose'] + command,
                                                env=self.env,
                                                logEnviron=self.logEnviron,

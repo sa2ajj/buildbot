@@ -36,6 +36,7 @@ from buildbot import config
 from buildbot import interfaces
 from buildbot import util
 from buildbot.interfaces import BuildSlaveTooOldError
+from buildbot.process.constants import DEFAULT_DECODE_RC
 from buildbot.process import log as plog
 from buildbot.process import logobserver
 from buildbot.process import properties
@@ -1036,7 +1037,7 @@ class ShellMixin(object):
     interruptSignal = 'KILL'
     sigtermTime = None
     initialStdin = None
-    decodeRC = {0: SUCCESS}
+    decodeRC = DEFAULT_DECODE_RC
 
     _shellMixinArgs = [
         'command',

@@ -15,6 +15,7 @@
 
 from buildbot import util
 from buildbot.buildslave.protocols import base
+from buildbot.process.constants import DEFAULT_DECODE_RC
 from buildbot.process import metrics
 from buildbot.status.results import FAILURE
 from buildbot.status.results import SUCCESS
@@ -43,7 +44,7 @@ class RemoteCommand(base.RemoteCommandImpl):
                  collectStdout=False, collectStderr=False, decodeRC=None,
                  stdioLogName='stdio'):
         if decodeRC is None:
-            decodeRC = {0: SUCCESS}
+            decodeRC = DEFAULT_DECODE_RC
         self.logs = {}
         self.delayedLogs = {}
         self._closeWhenFinished = {}
@@ -338,7 +339,7 @@ class RemoteShellCommand(RemoteCommand):
         if logfiles is None:
             logfiles = {}
         if decodeRC is None:
-            decodeRC = {0: SUCCESS}
+            decodeRC = DEFAULT_DECODE_RC
         self.command = command  # stash .command, set it later
         if isinstance(self.command, basestring):
             # Single string command doesn't support obfuscation.

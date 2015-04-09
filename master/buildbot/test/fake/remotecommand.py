@@ -13,6 +13,7 @@
 #
 # Copyright Buildbot Team Members
 
+from buildbot.process.constants import DEFAULT_DECODE_RC
 from buildbot.status.results import FAILURE
 from buildbot.status.results import SUCCESS
 from buildbot.test.fake import logfile
@@ -32,7 +33,7 @@ class FakeRemoteCommand(object):
                  decodeRC=None,
                  stdioLogName='stdio'):
         if decodeRC is None:
-            decodeRC = {0: SUCCESS}
+            decodeRC = DEFAULT_DECODE_RC
         # copy the args and set a few defaults
         self.remote_command = remote_command
         self.args = args.copy()
@@ -93,7 +94,7 @@ class FakeRemoteShellCommand(FakeRemoteCommand):
         if logfiles is None:
             logfiles = {}
         if decodeRC is None:
-            decodeRC = {0: SUCCESS}
+            decodeRC = DEFAULT_DECODE_RC
         args = dict(workdir=workdir, command=command, env=env or {},
                     want_stdout=want_stdout, want_stderr=want_stderr,
                     initial_stdin=initialStdin,

@@ -299,7 +299,7 @@ class Monotone(Source):
             raise ValueError("No command specified")
 
         if decodeRC is None:
-            decodeRC = {0: SUCCESS}
+            decodeRC = buildstep.DEFAULT_DECODE_RC
         workdir = wkdir or self.workdir
         cmd = remotecommand.RemoteShellCommand(workdir, command,
                                                env=self.env,
