@@ -33,10 +33,10 @@ from twisted.web.util import formatFailure
 from zope.interface import implements
 
 from buildbot import config
+from buildbot.constants import DEFAULT_DECODE_RC
 from buildbot import interfaces
 from buildbot import util
 from buildbot.interfaces import BuildSlaveTooOldError
-from buildbot.process.constants import DEFAULT_DECODE_RC
 from buildbot.process import log as plog
 from buildbot.process import logobserver
 from buildbot.process import properties

@@ -13,8 +13,8 @@
 #
 # Copyright Buildbot Team Members
 
-SUCCESS, WARNINGS, FAILURE, SKIPPED, EXCEPTION, RETRY, CANCELLED = range(7)
-Results = ["success", "warnings", "failure", "skipped", "exception", "retry", "cancelled"]
+from buildbot.constants import (SUCCESS, WARNINGS, FAILURE, SKIPPED, EXCEPTION, RETRY, CANCELLED)
+from buildbot.constants import Results
 
 
 def statusToString(status):

@@ -13,7 +13,7 @@
 #
 # Copyright Buildbot Team Members
 
-from buildbot.process.constants import DEFAULT_DECODE_RC
+from buildbot.constants import DEFAULT_DECODE_RC
 from buildbot.status.results import FAILURE
 from buildbot.status.results import SUCCESS
 from buildbot.test.fake import logfile

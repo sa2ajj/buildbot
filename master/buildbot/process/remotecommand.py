@@ -13,12 +13,12 @@
 #
 # Copyright Buildbot Team Members
 
-from buildbot import util
 from buildbot.buildslave.protocols import base
-from buildbot.process.constants import DEFAULT_DECODE_RC
+from buildbot.constants import DEFAULT_DECODE_RC
 from buildbot.process import metrics
 from buildbot.status.results import FAILURE
 from buildbot.status.results import SUCCESS
+from buildbot import util
 from buildbot.util.eventual import eventually
 from twisted.internet import defer
 from twisted.internet import error

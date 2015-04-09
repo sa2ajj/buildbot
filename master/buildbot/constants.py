@@ -16,6 +16,9 @@
 Various constants that are relevant for buildbot.process modules
 """
 
+SUCCESS, WARNINGS, FAILURE, SKIPPED, EXCEPTION, RETRY, CANCELLED = range(7)
+Results = ["success", "warnings", "failure", "skipped", "exception", "retry", "cancelled"]
+
 DEFAULT_DECODE_RC = {
     0: SUCCESS
 }
