@@ -21,7 +21,8 @@ from twisted.python import log
 from buildbot import config as bbconfig
 from buildbot.interfaces import BuildSlaveTooOldError
 from buildbot.process import buildstep
-from buildbot.process import remotecommand
+from buildbot.process.remotecommand import RemoteCommand
+from buildbot.process.remotecommand import RemoteShellCommand
 from buildbot.steps.source.base import Source
 
 
@@ -268,7 +269,7 @@ class Git(Source):
 
         @d.addCallback
         def copy(_):
-            cmd = remotecommand.RemoteCommand('cpdir',
+            cmd = RemoteCommand('cpdir',
                                               {'fromdir': self.srcdir,
                                                'todir': old_workdir,
                                                'logEnviron': self.logEnviron,
@@ -340,7 +341,7 @@ class Git(Source):
                 full_command.append('-c')
                 full_command.append('%s=%s' % (name, value))
         full_command.extend(command)
-        cmd = remotecommand.RemoteShellCommand(self.workdir,
+        cmd = RemoteShellCommand(self.workdir,
                                                full_command,
                                                env=self.env,
                                                logEnviron=self.logEnviron,
@@ -504,7 +505,7 @@ class Git(Source):
 
     def _doClobber(self):
         """Remove the work directory"""
-        cmd = remotecommand.RemoteCommand('rmdir', {'dir': self.workdir,
+        cmd = RemoteCommand('rmdir', {'dir': self.workdir,
                                                     'logEnviron': self.logEnviron,
                                                     'timeout': self.timeout, })
         cmd.useLog(self.stdio_log, False)
@@ -585,7 +586,7 @@ class Git(Source):
                 else:
                     return "clone"
         else:
-            cmd = buildstep.RemoteCommand('listdir',
+            cmd = RemoteCommand('listdir',
                                           {'dir': self.workdir,
                                            'logEnviron': self.logEnviron,
                                            'timeout': self.timeout, })
