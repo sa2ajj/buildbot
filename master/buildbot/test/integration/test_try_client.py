@@ -234,7 +234,7 @@ class Schedulers(dirs.DirsMixin, www.RequiresWwwMixin, unittest.TestCase):
         buildsets = yield self.master.db.buildsets.getBuildsets()
         self.assertEqual(len(buildsets), 1)
 
-    @flaky(bugNumber=2762)
+    #@flaky(bugNumber=2762)
     @defer.inlineCallbacks
     def test_userpass_wait(self):
         yield self.startMaster(
