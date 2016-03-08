@@ -1,0 +1,23 @@
+#! /bin/sh
+#
+# Show base branches
+
+base=`git merge-base master eight`
+
+echo $base
+
+git branch | while read a b
+do
+    if [ -n "$b" ]
+    then
+        continue
+    fi
+    mpoint=`git merge-base master $a`
+
+    if [ "$mpoint" = "$base" ]
+    then
+        echo $a: eight
+    else
+        echo $a: master
+    fi
+done
