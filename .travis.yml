@@ -42,6 +42,7 @@ matrix:
 
 # Dependencies installation commands
 install:
+  - "echo 'travis_fold:start:locale'; locale; locale -a; echo 'travis_fold:end:locale'"
   - "echo 'travis_fold:start:tw'; [ $TWISTED = latest ] || pip install Twisted==$TWISTED; echo 'travis_fold:end:tw'"
   - "echo 'travis_fold:start:sa'; [ $SQLALCHEMY = latest ] || pip install sqlalchemy==$SQLALCHEMY; echo 'travis_fold:end:sa'"
   - "echo 'travis_fold:start:sa'; [ $SQLALCHEMY_MIGRATE = latest ] || pip install sqlalchemy-migrate==$SQLALCHEMY_MIGRATE; echo 'travis_fold:end:sam'"
