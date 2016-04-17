@@ -7,14 +7,14 @@
 /* -- page layout ----------------------------------------------------------- */
 
 body {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Source Sans Pro', sans-serif;
     font-size: 14px;
     line-height: 150%;
     text-align: center;
     color: #002b36;
     padding: 0;
     margin: 0px 80px 0px 80px;
-    min-width: 740px;	
+    min-width: 740px;
     -moz-box-shadow: 0px 0px 10px #93a1a1;
     -webkit-box-shadow: 0px 0px 10px #93a1a1;
     box-shadow: 0px 0px 10px #93a1a1;
@@ -94,8 +94,9 @@ div.sphinxsidebar {
 div.sphinxsidebar h3, div.sphinxsidebar h4 {
     margin: 1em 0 0.5em 0;
     font-size: 1em;
-    padding: 0.7em;
-    background-color: #eeeff1;
+    padding-top: 0.7em;
+    text-shadow: #eee 0.1em 0.1em 0.1em;
+    border-top: 1px solid #bbb;
 }
 
 div.sphinxsidebar h3 a {
@@ -134,7 +135,7 @@ div.footer a {
 
 /* -- body styles ----------------------------------------------------------- */
 
-p {    
+p {
     margin: 0.8em 0 0.5em 0;
 }
 
@@ -148,7 +149,7 @@ div.body a:hover, div.sphinxsidebarwrapper a:hover {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: "Open Sans", sans-serif;
+    font-family: 'Source Sans Pro', sans-serif;
     font-weight: 300;
 }
 
@@ -174,7 +175,7 @@ h3 {
 
 h3, h4, h5, h6 {
     color: #073642;
-	border-bottom: 1px dotted #eee;
+    border-bottom: 1px dotted #ddd;
 }
 
 div.body h1 a, div.body h2 a, div.body h3 a, div.body h4 a, div.body h5 a, div.body h6 a {
@@ -215,7 +216,7 @@ a.headerlink:hover {
 
 cite, code, tt {
     font-family: 'Source Code Pro', monospace;
-	font-size: 0.9em;
+    font-size: 0.9em;
     letter-spacing: 0.01em;
     background-color: #eeeff2;
     font-style: normal;
@@ -235,15 +236,15 @@ hr {
 pre {
     font-family: 'Source Code Pro', monospace;
     font-style: normal;
-	font-size: 0.9em;
+    font-size: 0.9em;
     letter-spacing: 0.015em;
     line-height: 120%;
     padding: 0.7em;
-	white-space: pre-wrap;       /* css-3 */
-	white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
-	white-space: -pre-wrap;      /* Opera 4-6 */
-	white-space: -o-pre-wrap;    /* Opera 7 */
-	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+    white-space: pre-wrap;       /* css-3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
 
 pre a {
@@ -263,8 +264,15 @@ div.quotebar {
     border: 1px solid #ccc;
 }
 
+.topic-title {
+    border-bottom: 1px dotted #ddd;
+}
+
 div.topic {
-    background-color: #f8f8f8;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    border-left: none;
+    border-right: none;
 }
 
 table {
