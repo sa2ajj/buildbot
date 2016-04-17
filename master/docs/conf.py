@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-#
-# Buildbot documentation build configuration file, created by
-# sphinx-quickstart on Tue Aug 10 15:13:31 2010.
-#
+"""
+Buildbot documentation build configuration file.
+"""
+
 # This file is execfile()d with the current directory set to its containing dir.
 #
 # Note that not all possible configuration values are present in this
@@ -11,9 +11,18 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+# This is a special file, so make PyLint complain less [a bit].
+# pylint:disable=C0103,W0622
+
 import os
 import sys
-import textwrap
+from textwrap import dedent
+
+import pkg_resources
+
+import sphinx
+import sphinx.highlighting
+from sphinx.errors import SphinxWarning
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -25,15 +34,17 @@ try:
     import sphinxcontrib.blockdiag
     assert sphinxcontrib.blockdiag
 except ImportError:
-    raise RuntimeError("sphinxcontrib.blockdiag is not installed. "
-        "Please install documentation dependencies with `pip install buildbot[docs]`")
+    raise RuntimeError('sphinxcontrib.blockdiag is not installed. Please '
+                       'install documentation dependencies with '
+                       '`pip install buildbot[docs]`')
 
-import pkg_resources
 try:
     pkg_resources.require('docutils>=0.8')
 except pkg_resources.ResolutionError:
-    raise RuntimeError("docutils is not installed or has incompatible version. "
-        "Please install documentation dependencies with `pip install buildbot[docs]`")
+    raise RuntimeError('docutils is not installed or has incompatible '
+                       'version. Please install documentation dependencies '
+                       'with `pip install buildbot[docs]`')
+
 # If your documentation needs a minimal Sphinx version, state it here.
 needs_sphinx = '1.0'
 
@@ -81,7 +92,7 @@ release = version
 
 # add a loud note for anyone looking at the latest docs
 if release == 'latest':
-    rst_prolog = textwrap.dedent("""\
+    rst_prolog = dedent("""\
     .. caution:: This page documents the latest, unreleased version of
         Buildbot.  For documentation for released versions, see
         http://docs.buildbot.net/current/.
@@ -180,7 +191,12 @@ html_use_smartypants = False
 
 # Custom sidebar templates, maps document names to template names.
 html_sidebars = {
-    '**': ['searchbox.html', 'localtoc.html', 'relations.html', 'sourcelink.html']
+    '**': [
+        'searchbox.html',
+        'localtoc.html',
+        # 'relations.html',
+        'sourcelink.html'
+    ]
 }
 
 # Additional templates that should be rendered to pages, maps page names to
@@ -268,19 +284,10 @@ man_pages = [
      [u'Brian Warner'], 1)
 ]
 
-
 # Monkey-patch Sphinx to treat unhiglighted code as error.
-import sphinx
-import sphinx.highlighting
-
-from pkg_resources import parse_version
-from sphinx.errors import SphinxWarning
-
 # Versions of Sphinx below changeset 1860:19b394207746 (before v0.6.6 release)
 # won't work due to different PygmentsBridge interface.
 required_sphinx_version = '0.6.6'
-sphinx_version_supported = \
-    parse_version(sphinx.__version__) >= parse_version(required_sphinx_version)
 
 # This simple monkey-patch allows either fail on first unhighlighted block or
 # print all unhighlighted blocks and don't fail at all.
@@ -300,7 +307,7 @@ def patched_unhighlighted(self, source):
     indented_source = '    ' + '\n    '.join(source.split('\n'))
 
     if fail_on_first_unhighlighted:
-        msg = textwrap.dedent(u"""\
+        raise UnhighlightedError(dedent(u"""\
             Block not highlighted:
 
             %s
@@ -317,10 +324,9 @@ def patched_unhighlighted(self, source):
 
             Note that in most places you can use "..." in Python code as valid
             anonymous expression.
-            """) % indented_source
-        raise UnhighlightedError(msg)
+            """) % indented_source)
     else:
-        msg = textwrap.dedent(u"""\
+        msg = dedent(u"""\
             Unhighlighted block:
 
             %s
@@ -337,23 +343,24 @@ def patched_unhighlighted(self, source):
 def patched_highlight_block(self, *args, **kwargs):
     try:
         return orig_highlight_block(self, *args, **kwargs)
-    except UnhighlightedError, ex:
-        msg = ex.args[0]
+    except UnhighlightedError as err:
+        msg = err.args[0]
         if 'warn' in kwargs:
             kwargs['warn'](msg)
 
         raise
 
-if sphinx_version_supported:
+if (pkg_resources.parse_version(sphinx.__version__) >=
+        pkg_resources.parse_version(required_sphinx_version)):
+
     orig_unhiglighted = sphinx.highlighting.PygmentsBridge.unhighlighted
     orig_highlight_block = sphinx.highlighting.PygmentsBridge.highlight_block
 
     sphinx.highlighting.PygmentsBridge.unhighlighted = patched_unhighlighted
     sphinx.highlighting.PygmentsBridge.highlight_block = patched_highlight_block
 else:
-    msg = textwrap.dedent("""\
+    sys.stderr.write(dedent("""\
         WARNING: Your Sphinx version %s is too old and will not work with
         monkey-patch for checking unhighlighted code.  Minimal required version
         of Sphinx is %s.  Check disabled.
-        """) % (sphinx.__version__, required_sphinx_version)
-    sys.stderr.write(msg)
+        """) % (sphinx.__version__, required_sphinx_version))
