@@ -273,5 +273,7 @@ man_pages = [
 ]
 
 jinja_contexts = {
-    "data_api": {'raml': RamlSpec()}
+    'data_api': {
+        'raml': RamlSpec()
+    }
 }
