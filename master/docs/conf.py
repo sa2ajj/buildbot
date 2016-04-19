@@ -18,8 +18,18 @@ import textwrap
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-here = os.path.abspath('.')
-sys.path.append(here)
+here = os.path.dirname(os.path.abspath(__file__))
+
+sys.path.insert(1, os.path.dirname(here))
+sys.path.insert(1, here)
+
+try:
+    import ramlfications
+    assert ramlfications
+except ImportError:
+    raise RuntimeError('ramlfications module is not installed. '
+                       'Please install ...')
+
 from buildbot.util.raml import RamlSpec
 
 # -- General configuration -----------------------------------------------------

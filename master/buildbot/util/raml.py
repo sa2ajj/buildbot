@@ -12,15 +12,15 @@
 # Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 # Copyright Buildbot Team Members
-import copy
-import json
-import os
-import ramlfications
-
 try:
     from collections import OrderedDict
 except ImportError:  # pragma: no cover
     from ordereddict import OrderedDict
+import copy
+import json
+import os
+
+import ramlfications
 
 
 class RamlSpec(object):
