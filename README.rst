@@ -12,6 +12,10 @@ Buildbot is based on original work from `Brian Warner
 
 |travis-badge|_ |codecov-badge|_ |readthedocs-badge|_
 
+.. image:: https://graphs.waffle.io/buildbot/buildbot/throughput.svg
+   :target: https://waffle.io/buildbot/buildbot/
+   :alt: 'Throughput Graph'
+
 Buildbot consists of several components:
 
 * master
