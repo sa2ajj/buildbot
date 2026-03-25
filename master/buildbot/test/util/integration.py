@@ -20,10 +20,14 @@ import sys
 from io import StringIO
 from typing import TYPE_CHECKING
 from typing import Any
+from typing import Protocol
+from typing import cast
 from unittest import mock
 
 from twisted.internet import defer
 from twisted.internet import reactor
+from twisted.internet.base import DelayedCall
+from twisted.internet.interfaces import IReactorCore
 from twisted.python import log
 from twisted.python.filepath import FilePath
 from twisted.trial import unittest
@@ -47,6 +51,11 @@ from buildbot_worker.bot import Worker
 
 if TYPE_CHECKING:
     from twisted.application.service import Service
+    from twisted.internet.interfaces import IDelayedCall
+
+
+class _DelayedCallReactorCore(Protocol):
+    def getDelayedCalls(self) -> list[IDelayedCall]: ...
 
 
 @implementer(IConfigLoader)
@@ -403,6 +412,37 @@ class RunMasterBase(unittest.TestCase):
     # All tests that start master need higher timeout due to test runtime variability on
     # oversubscribed hosts.
     timeout = 60
+
+    def setUp(self):
+        super().setUp()
+
+        if not self._should_enable_pb_interop_diagnostics():
+            return
+
+        delayed_call_debug = DelayedCall.debug
+        DelayedCall.debug = True
+
+        def cleanup() -> None:
+            try:
+                if not self._passed:
+                    self._log_pending_delayed_calls()
+            finally:
+                DelayedCall.debug = delayed_call_debug
+
+        self.addCleanup(cleanup)
+
+    def _should_enable_pb_interop_diagnostics(self) -> bool:
+        module_name = type(self).__module__
+        return self.proto == "pb" and module_name.startswith("buildbot.test.integration.interop.")
+
+    def _log_pending_delayed_calls(self) -> None:
+        delayed_calls = cast(_DelayedCallReactorCore, cast(IReactorCore, reactor)).getDelayedCalls()
+        if not delayed_calls:
+            return
+
+        log.msg(f"pending delayed calls after failed test {self.id()}:")
+        for delayed_call in delayed_calls:
+            log.msg(f"  {delayed_call!r}")
 
     @defer.inlineCallbacks
     def setup_master(self, config_dict, startWorker=True, basedir=None, **worker_kwargs):
